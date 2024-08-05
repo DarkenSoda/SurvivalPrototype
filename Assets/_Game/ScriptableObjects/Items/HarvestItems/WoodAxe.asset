@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d1b173b92ee03a94bb341750b4a1aa8b, type: 3}
+  m_Name: WoodAxe
+  m_EditorClassIdentifier: 
+  <Name>k__BackingField: Wood Axe
+  <Description>k__BackingField: Cut Trees
+  <Icon>k__BackingField: {fileID: 21300000, guid: 85fd874b18bcb084d93660cf1302e9dd,
+    type: 3}
+  <MaxStack>k__BackingField: 1
+  <IsHarvestItem>k__BackingField: 1
+  <HeldPrefab>k__BackingField: {fileID: 3188313086354724392, guid: 8982d0fbc77bb234c8da38f47ff8e13d,
+    type: 3}
+  <DroppedItemData>k__BackingField:
+    <DroppedPrefab>k__BackingField: {fileID: 1923533400590645120, guid: f92c73b0c6341db499f28a3a352b33fa,
+      type: 3}
+    <Position>k__BackingField: {x: 0, y: 0, z: 0}
+    <Rotation>k__BackingField: {x: 0, y: 0, z: 0, w: 0}
+    <Scale>k__BackingField: {x: 1, y: 1, z: 1}
+  <Damage>k__BackingField: 1
+  <Range>k__BackingField: 1
+  <MaxDurability>k__BackingField: 100
+  <DurabilityDecreaseRate>k__BackingField: 35
+  <HarvestableType>k__BackingField: 0
