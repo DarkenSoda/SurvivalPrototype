@@ -1,17 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Game.Items.Data;
 using UnityEngine;
-using Alchemy.Inspector;
 using Alchemy.Serialization;
-using System;
 using Game.UI.Inventory;
 using Game.Items.Wrappers;
-using UnityEngine.UI;
-using Game.Harvesting;
-using Game.Items;
+using Game.Player;
 
-namespace Game.Player
+namespace Game.Inventory
 {
     [AlchemySerialize]
     public partial class Inventory : MonoBehaviour
