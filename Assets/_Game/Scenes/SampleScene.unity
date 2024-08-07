@@ -4112,7 +4112,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   arm: {fileID: 1550190482}
   itemHolder: {fileID: 1763847631}
-  startItem: {fileID: 11400000, guid: 826b6426f661c7e4eb77bf0c2edbc8a6, type: 2}
 --- !u!114 &2069584935
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4127,11 +4126,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   view: {fileID: 1451026187}
   dropForce: 5
-  __alchemySerializationData_Game_Player_Inventory:
+  __alchemySerializationData_Game_InventorySystem_Inventory:
     startingItems:
       isCreated: 1
-      data: "[\n    {\n        \"Key\": 0,\n        \"Value\": 8\n    },\n    {\n       
-        \"Key\": 1,\n        \"Value\": 2\n    }\n]"
+      data: "[\n    {\n        \"Key\": 0,\n        \"Value\": 10\n    },\n    {\n       
+        \"Key\": 1,\n        \"Value\": 1\n    }\n]"
     unityObjectReferences:
     - {fileID: 11400000, guid: 2414763362f5fda42bb0467ac63ed5ae, type: 2}
     - {fileID: 11400000, guid: 826b6426f661c7e4eb77bf0c2edbc8a6, type: 2}

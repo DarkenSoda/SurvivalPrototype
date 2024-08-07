@@ -8,7 +8,7 @@ using Game.UI.Inventory;
 using Game.Items.Wrappers;
 using Game.Player;
 
-namespace Game.Inventory
+namespace Game.InventorySystem
 {
     [AlchemySerialize]
     public partial class Inventory : MonoBehaviour
@@ -37,6 +37,9 @@ namespace Game.Inventory
         {
             yield return view.Initialize();
 
+            if (startingItems == null)
+                startingItems = new Dictionary<ItemData, int>();
+
             foreach (var item in startingItems)
             {
                 int totalAmount = item.Value;
@@ -49,7 +52,7 @@ namespace Game.Inventory
                 {
                     yield return view.AddItem(item.Key.CreateWrapper(), stackSize);
                 }
-                
+
                 yield return view.AddItem(item.Key.CreateWrapper(), remainder);
             }
 

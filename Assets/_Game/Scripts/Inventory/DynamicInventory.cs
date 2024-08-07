@@ -5,7 +5,7 @@ using Game.Items.Data;
 using Game.UI.Inventory;
 using Utilities.DataStructures;
 
-namespace Game.Inventory
+namespace Game.InventorySystem
 {
     public class DynamicInventory : SortedMultiDictionary<ItemData, Slot>
     {

@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Game.InventorySystem;
 using Game.Items.Data;
 using Game.Items.Wrappers;
 using UnityEngine;
@@ -61,7 +62,7 @@ namespace Game.Items
 
             if (other.CompareTag("Player"))
             {
-                other.GetComponent<Player.Inventory>().PickUpItem(ItemWrapper);
+                other.GetComponent<Inventory>().PickUpItem(ItemWrapper);
                 Destroy(gameObject);
             }
         }

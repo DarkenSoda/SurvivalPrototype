@@ -29,5 +29,5 @@ MonoBehaviour:
   <Damage>k__BackingField: 1
   <Range>k__BackingField: 1
   <MaxDurability>k__BackingField: 100
-  <DurabilityDecreaseRate>k__BackingField: 35
+  <DurabilityDecreaseRate>k__BackingField: 20
   <HarvestableType>k__BackingField: 0
