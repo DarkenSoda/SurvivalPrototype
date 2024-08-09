@@ -1,0 +1,13 @@
+.jump {
+    flex-shrink: 0;
+    flex-grow: 0;
+    margin: 24px;
+    width: 64px;
+    height: 64px;
+    transition: translate 0.2s ease-in-out, rotate 0.2s ease-in-out;
+}
+
+.jumpUp {
+    rotate: 45deg;
+    translate: 0px -104px;
+}

@@ -6,6 +6,8 @@ namespace Utilities.DataStructures
 {
     public class SortedMultiDictionary<K, V> : SortedDictionary<K, List<V>>
     {
+        public SortedMultiDictionary(IComparer<K> comparer) : base(comparer) { }
+
         public void Add(K key, V value)
         {
             if (!ContainsKey(key))

@@ -9,16 +9,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1b173b92ee03a94bb341750b4a1aa8b, type: 3}
-  m_Name: WoodAxe
+  m_Script: {fileID: 11500000, guid: 012a591ab0b1c204b902b072ceed8143, type: 3}
+  m_Name: Stone
   m_EditorClassIdentifier: 
-  <Name>k__BackingField: Wood Axe
-  <Description>k__BackingField: Cuts Trees
-  <Icon>k__BackingField: {fileID: 21300000, guid: 85fd874b18bcb084d93660cf1302e9dd,
+  <Name>k__BackingField: Stone
+  <Description>k__BackingField: Stone\nUsed for crafting
+  <Icon>k__BackingField: {fileID: 21300000, guid: 4c0450abaca14014fb13ca627d98a649,
     type: 3}
-  <MaxStack>k__BackingField: 1
-  <ItemType>k__BackingField: 1
-  <HeldPrefab>k__BackingField: {fileID: 3188313086354724392, guid: 8982d0fbc77bb234c8da38f47ff8e13d,
+  <MaxStack>k__BackingField: 3
+  <ItemType>k__BackingField: 4
+  <HeldPrefab>k__BackingField: {fileID: 7899196362255097851, guid: 1e0cefea9ba9799428e5d626f2834b43,
     type: 3}
   <DroppedItemData>k__BackingField:
     <DroppedPrefab>k__BackingField: {fileID: 1923533400590645120, guid: f92c73b0c6341db499f28a3a352b33fa,
@@ -26,8 +26,3 @@ MonoBehaviour:
     <Position>k__BackingField: {x: 0, y: 0, z: 0}
     <Rotation>k__BackingField: {x: 0, y: 0, z: 0, w: 0}
     <Scale>k__BackingField: {x: 1, y: 1, z: 1}
-  <Damage>k__BackingField: 1
-  <Range>k__BackingField: 1
-  <MaxDurability>k__BackingField: 100
-  <DurabilityDecreaseRate>k__BackingField: 20
-  <HarvestableType>k__BackingField: 0

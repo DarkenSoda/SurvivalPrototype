@@ -13,7 +13,9 @@ namespace Game.Player
 
         private Animator armAnimator;
         private Item currentItem;
+        private ItemWrapper currentItemWrapper;
         public event System.Action OnSelectedItemBroken;
+        public event System.Action OnSelectedItemDurabilityChanged;
 
         private void Awake()
         {
@@ -23,6 +25,9 @@ namespace Game.Player
 
         private void Update()
         {
+            if (currentItem == null)
+                return;
+
             if (Input.GetMouseButtonDown(0))
             {
                 armAnimator.SetBool("Use", true);
@@ -35,12 +40,13 @@ namespace Game.Player
 
         public void EquipItem(ItemWrapper itemWrapper)
         {
-            if (currentItem != null)
+            if (currentItemWrapper != null)
                 UnEquipItem();
 
             if (itemWrapper == null)
                 return;
 
+            currentItemWrapper = itemWrapper;
             currentItem = itemWrapper.ItemData switch
             {
                 HarvestItemData harvestItemData => new HarvestItem(itemWrapper),
@@ -49,21 +55,43 @@ namespace Game.Player
             };
 
             Instantiate(itemWrapper.ItemData.HeldPrefab, itemHolder);
-
-            itemWrapper.OnItemBroken += UpdateInventory;
+            RegisterCallbacks();
 
             arm.gameObject.SetActive(true);
         }
 
         public void UnEquipItem()
         {
-            currentItem.Wrapper.OnItemBroken -= UpdateInventory;
+            UnregisterCallbacks();
 
             currentItem = null;
+            currentItemWrapper = null;
             arm.gameObject.SetActive(false);
 
             if (itemHolder.childCount > 0)
                 Destroy(itemHolder.GetChild(0).gameObject);
+        }
+
+        public void RegisterCallbacks()
+        {
+            if (currentItemWrapper == null)
+                return;
+
+            currentItemWrapper.OnItemBroken += ItemBroken;
+
+            if (currentItemWrapper is IDurable durableItem)
+                durableItem.OnDurabilityChanged += DurabilityChanged;
+        }
+
+        public void UnregisterCallbacks()
+        {
+            if (currentItemWrapper == null)
+                return;
+
+            currentItemWrapper.OnItemBroken -= ItemBroken;
+
+            if (currentItemWrapper is IDurable durableItem)
+                durableItem.OnDurabilityChanged -= DurabilityChanged;
         }
 
         public void UseItem()
@@ -71,9 +99,14 @@ namespace Game.Player
             currentItem?.Use();
         }
 
-        private void UpdateInventory()
+        private void ItemBroken()
         {
             OnSelectedItemBroken?.Invoke();
+        }
+
+        private void DurabilityChanged()
+        {
+            OnSelectedItemDurabilityChanged?.Invoke();
         }
     }
 }

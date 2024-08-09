@@ -30,7 +30,7 @@ namespace Game.UI.Inventory
             evt.StopPropagation();
         }
 
-        public void Set(ItemWrapper itemWrapper, int amount = 0)
+        public virtual void Set(ItemWrapper itemWrapper, int amount = 0)
         {
             ItemWrapper = itemWrapper;
 

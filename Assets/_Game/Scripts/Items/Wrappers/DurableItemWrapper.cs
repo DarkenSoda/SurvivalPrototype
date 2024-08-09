@@ -5,6 +5,7 @@ namespace Game.Items.Wrappers
     public class DurableItemWrapper : ItemWrapper, IDurable
     {
         public float CurrentDurability { get; set; }
+        public event System.Action OnDurabilityChanged;
 
         public DurableItemWrapper(HarvestItemData itemData) : base(itemData)
         {
@@ -19,6 +20,7 @@ namespace Game.Items.Wrappers
         public void DecreaseDurability(float amount)
         {
             CurrentDurability -= amount;
+            OnDurabilityChanged?.Invoke();
 
             if (CurrentDurability <= 0)
             {

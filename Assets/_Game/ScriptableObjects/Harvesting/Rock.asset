@@ -14,6 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <MaxHealth>k__BackingField: 3
   <Type>k__BackingField: 1
-  <DropOffset>k__BackingField: {x: 0, y: 0, z: 0}
-  <RandomOffset>k__BackingField: 0.5
-  <Drops>k__BackingField: []
+  <DropOffset>k__BackingField: {x: 0, y: 2, z: 0}
+  <RandomOffset>k__BackingField: 1
+  <Drops>k__BackingField:
+  - ItemData: {fileID: 11400000, guid: bda324541b42fd846824a01be1436439, type: 2}
+    MinAmount: 4
+    MaxAmount: 10

@@ -30,12 +30,14 @@ namespace Game.InventorySystem
 
             cameraTransform = Camera.main.transform;
             playerItemManager = GetComponent<PlayerItemManager>();
-            playerItemManager.OnSelectedItemBroken += UpdateSelectedItem;
+            playerItemManager.OnSelectedItemBroken += ReduceSelectedItem;
+            playerItemManager.OnSelectedItemDurabilityChanged += UpdateSelectedItemDurability;
         }
 
         private IEnumerator Initialize()
         {
             yield return view.Initialize();
+            ToggleInventory();
 
             if (startingItems == null)
                 startingItems = new Dictionary<ItemData, int>();
@@ -50,17 +52,16 @@ namespace Game.InventorySystem
 
                 for (int i = 0; i < stacks; i++)
                 {
-                    yield return view.AddItem(item.Key.CreateWrapper(), stackSize);
+                    yield return view.AddItemToInventory(item.Key.CreateWrapper(), stackSize);
                 }
 
-                yield return view.AddItem(item.Key.CreateWrapper(), remainder);
+                yield return view.AddItemToInventory(item.Key.CreateWrapper(), remainder);
             }
 
             view.OnItemDropped += OnItemDropped;
             OnSelectedSlotChanged += OnHotbarSlotChanged;
             view.OnHotbarSlotChanged += OnCheckHotbarSlotChanged;
             OnSelectedSlotChanged?.Invoke();
-            ToggleInventory();
         }
 
         private void Update()
@@ -91,7 +92,7 @@ namespace Game.InventorySystem
 
         public void PickUpItem(ItemWrapper itemWrapper)
         {
-            StartCoroutine(view.AddItem(itemWrapper, 1));
+            StartCoroutine(view.AddItemToInventory(itemWrapper, 1));
         }
 
         private void OnItemDropped(ItemWrapper wrapper, int amount)
@@ -118,7 +119,8 @@ namespace Game.InventorySystem
             OnSelectedSlotChanged -= OnHotbarSlotChanged;
             view.OnHotbarSlotChanged -= OnCheckHotbarSlotChanged;
 
-            playerItemManager.OnSelectedItemBroken -= UpdateSelectedItem;
+            playerItemManager.OnSelectedItemBroken -= ReduceSelectedItem;
+            playerItemManager.OnSelectedItemDurabilityChanged -= UpdateSelectedItemDurability;
         }
     }
 
@@ -142,6 +144,9 @@ namespace Game.InventorySystem
 
         public void HandleScroll()
         {
+            if (IsInventoryVisible)
+                return;
+
             if (Input.mouseScrollDelta.y > 0)
             {
                 SelectedSlotIndex = (SelectedSlotIndex + 1) % view.HotbarSlotCount;
@@ -169,9 +174,14 @@ namespace Game.InventorySystem
             }
         }
 
-        public void UpdateSelectedItem()
+        public void ReduceSelectedItem()
         {
             view.DecreaseSelectedItemAmount(selectedSlotIndex);
+        }
+
+        public void UpdateSelectedItemDurability()
+        {
+            view.UpdateSelectedItemDurability(selectedSlotIndex);
         }
     }
 }

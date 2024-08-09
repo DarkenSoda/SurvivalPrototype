@@ -15,8 +15,11 @@ MonoBehaviour:
   <MaxHealth>k__BackingField: 5
   <Type>k__BackingField: 0
   <DropOffset>k__BackingField: {x: 0, y: 3, z: 0}
-  <RandomOffset>k__BackingField: 0.5
+  <RandomOffset>k__BackingField: 1
   <Drops>k__BackingField:
   - ItemData: {fileID: 11400000, guid: 2414763362f5fda42bb0467ac63ed5ae, type: 2}
     MinAmount: 1
     MaxAmount: 5
+  - ItemData: {fileID: 11400000, guid: cb8d9e640f2d10c4a83f66d1b27f2649, type: 2}
+    MinAmount: 3
+    MaxAmount: 7

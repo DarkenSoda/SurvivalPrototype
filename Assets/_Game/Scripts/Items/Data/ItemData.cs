@@ -5,14 +5,15 @@ using UnityEngine;
 
 namespace Game.Items.Data
 {
-    public abstract class ItemData : ScriptableObject
+    [CreateAssetMenu(fileName = "New Item", menuName = "Scriptable Objects/Items/Item")]
+    public class ItemData : ScriptableObject
     {
         [field: Header("General Data")]
         [field: SerializeField] public string Name { get; private set; }
         [field: SerializeField] public string Description { get; private set; }
         [field: SerializeField] public Sprite Icon { get; private set; }
         [field: SerializeField] public int MaxStack { get; private set; }
-        [field: SerializeField] public bool IsHarvestItem { get; private set; }
+        [field: SerializeField] public ItemType ItemType { get; private set; }
 
         [field: Header("Prefabs")]
         [field: SerializeField] public GameObject HeldPrefab { get; private set; }

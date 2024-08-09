@@ -1,19 +1,21 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
+using Game.InventorySystem;
 using Game.Items.Data;
 using Game.Items.Wrappers;
 using UnityEngine;
 using UnityEngine.UIElements;
+using Game.Utilities;
 
 namespace Game.UI.Inventory
 {
-    public class InventoryView : MonoBehaviour
+    public partial class InventoryView : MonoBehaviour
     {
         [SerializeField] private UIDocument document;
         [SerializeField] private StyleSheet styleSheet;
         [SerializeField] private string panelName = "Inventory";
-        [SerializeField] private int slotCount = 20;
         [SerializeField] private int hotbarSlotCount = 8;
 
         private static VisualElement ghostIcon;
@@ -26,35 +28,21 @@ namespace Game.UI.Inventory
         private VisualElement container;
         private VisualElement inventory;
         private VisualElement hotbar;
+        // private VisualElement inventorySlotContainer;
+        // private ListView inventorySlotContainer;
+        private ScrollView inventorySlotContainer;
 
-        private InventorySlot[] slots;
+        private DynamicInventory dynamicInventory;
         private HotbarSlot[] hotbarSlots;
         private Slot draggedSlot;
 
         public event Action<ItemWrapper, int> OnItemDropped;
         public event Action<int> OnHotbarSlotChanged;
 
-        private IEnumerator RegisterCallbacks()
-        {
-            container.RegisterCallback<PointerMoveEvent>(OnPointerMove);
-            container.RegisterCallback<PointerUpEvent>(OnPointerUp);
-
-            foreach (var slot in slots)
-            {
-                slot.OnPointerDownAction += OnSlotPressed;
-            }
-
-            foreach (var slot in hotbarSlots)
-            {
-                slot.OnPointerDownAction += OnSlotPressed;
-            }
-
-            yield return null;
-        }
-
+        #region Initialization
         public IEnumerator Initialize()
         {
-            slots = new InventorySlot[slotCount];
+            dynamicInventory = new DynamicInventory(new DynamicInventoryComparer());
             hotbarSlots = new HotbarSlot[hotbarSlotCount];
 
             root = document.rootVisualElement;
@@ -79,15 +67,11 @@ namespace Game.UI.Inventory
             inventory = container.CreateChild("inventory");
             inventory.CreateChild("inventoryFrame");
             inventory.CreateChild("inventoryTitle").Add(new Label(panelName));
-
-            var slotContainer = inventory.CreateChild("slotContainer");
-            for (int i = 0; i < slotCount; i++)
-            {
-                var slot = slotContainer.CreateChild<InventorySlot>("slot");
-                slots[i] = slot;
-            }
-
             inventory.style.visibility = Visibility.Visible;
+
+            inventorySlotContainer = inventory.CreateChild<ScrollView>("slotContainer");
+            inventorySlotContainer.mouseWheelScrollSize = 500;
+            inventorySlotContainer.verticalScroller.style.visibility = Visibility.Hidden;
 
             yield return null;
         }
@@ -105,48 +89,48 @@ namespace Game.UI.Inventory
 
             yield return null;
         }
+        #endregion
 
-        public IEnumerator AddItem(ItemWrapper item, int amount)
+        #region Inventory Management
+        public IEnumerator AddItemToInventory(ItemWrapper item, int amount)
         {
-            // Find slot with same item and max stack size not reached
             for (int i = 0; i < amount; i++)
             {
-                var slot = slots
-                    .Where(s => s.ItemWrapper?.ItemData == item.ItemData && s.Amount < item.ItemData.MaxStack)
-                    .FirstOrDefault();
+                var addedSlot = dynamicInventory.AddItem(item);
 
-                if (slot != null)
-                {
-                    slot.SetAmount(slot.Amount + 1);
-
-                    yield return null;
-                    continue;
-                }
-
-                // if not found, find empty slot
-                slot = slots
-                    .Where(s => s.Sprite == null)
-                    .FirstOrDefault();
-
-                if (slot != null)
-                {
-                    slot.Set(item, 1);
-                }
-                else
-                {
-                    // if not found, drop item
-                }
-
+                if (addedSlot != null)
+                    addedSlot.OnPointerDownAction += OnSlotPressed;
 
                 yield return null;
             }
+        }
+
+        public void RemoveSlotFromInventory(Slot slot)
+        {
+            if (slot is not InventorySlot inventorySlot)
+                return;
+
+            slot.OnPointerDownAction -= OnSlotPressed;
+            dynamicInventory.RemoveSlot(slot);
+        }
+
+        private void UpdateInventorySlots()
+        {
+            inventorySlotContainer.Clear();
+            foreach (var slot in dynamicInventory.GetAllSlots())
+            {
+                inventorySlotContainer.Add(slot);
+            }
+            inventorySlotContainer.MarkDirtyRepaint();
         }
 
         public void ToggleInventory()
         {
             inventory.style.visibility = inventory.style.visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
         }
+        #endregion
 
+        #region UI Events
         private void OnSlotPressed(PointerDownEvent e, Slot pressedSlot)
         {
             isDragging = true;
@@ -167,72 +151,27 @@ namespace Game.UI.Inventory
 
         private void OnPointerUp(PointerUpEvent e)
         {
-            if (!isDragging)
-                return;
+            if (!isDragging) return;
 
-            Slot closestSlot = slots
-                .Where(s => s.worldBound.Overlaps(ghostIcon.worldBound))
-                .Union<Slot>(hotbarSlots.Where(s => s.worldBound.Overlaps(ghostIcon.worldBound)))
-                .OrderBy(s => Vector2.Distance(s.worldBound.center, ghostIcon.worldBound.center))
-                .FirstOrDefault();
+            bool isOverInventory = ghostIcon.worldBound.Overlaps(inventory.worldBound);
+            bool isOverHotbar = ghostIcon.worldBound.Overlaps(hotbar.worldBound);
 
-            ghostIcon.style.visibility = Visibility.Hidden;
-            isDragging = false;
-
-            if (closestSlot == null)
+            if (isOverInventory)
             {
-                // Drop item
-                OnItemDropped?.Invoke(draggedSlot.ItemWrapper, draggedSlot.Amount);
-                draggedSlot.Set(null, 0);
-                draggedSlot = null;
-                return;
+                HandleInventoryDrop();
+            }
+            else if (isOverHotbar)
+            {
+                HandleHotbarDrop();
+            }
+            else
+            {
+                DropDraggedItem();
             }
 
-            if (draggedSlot is InventorySlot)
-                HandleInventorySlotDropped(closestSlot);
-
-            if (draggedSlot is HotbarSlot)
-                HandleHotbarSlotDropped(closestSlot);
-
-            draggedSlot = null;
+            ResetDraggingState();
         }
-
-        private void HandleInventorySlotDropped(Slot closestSlot)
-        {
-            if (closestSlot is InventorySlot)
-                return;
-
-            if (closestSlot is not HotbarSlot hotbarSlot)
-                return;
-
-            var inventorySlot = draggedSlot as InventorySlot;
-
-            var temp = hotbarSlot.ItemWrapper;
-            var tempAmount = hotbarSlot.Amount;
-            hotbarSlot.Set(inventorySlot.ItemWrapper, inventorySlot.Amount);
-            inventorySlot.Set(temp, tempAmount);
-            OnHotbarSlotChanged?.Invoke(closestSlot.Index);
-
-            // change from swap to AddItem later
-            // AddItem(temp, tempAmount);
-        }
-
-        private void HandleHotbarSlotDropped(Slot closestSlot)
-        {
-            var hotbarSlot = draggedSlot as HotbarSlot;
-
-            var temp = closestSlot.ItemWrapper;
-            var tempAmount = closestSlot.Amount;
-            closestSlot.Set(hotbarSlot.ItemWrapper, hotbarSlot.Amount);
-            hotbarSlot.Set(temp, tempAmount);
-
-            OnHotbarSlotChanged?.Invoke(draggedSlot.Index);
-            if (closestSlot is HotbarSlot)
-                OnHotbarSlotChanged?.Invoke(closestSlot.Index);
-
-            // change from swap to AddItem later if target is inventory slot
-            // AddItem(temp, tempAmount);
-        }
+        #endregion
 
         private static void SetGhostIconPosition(Vector2 position)
         {
@@ -258,5 +197,140 @@ namespace Game.UI.Inventory
             if (hotbarSlots[index].Amount == 0)
                 OnHotbarSlotChanged?.Invoke(index);
         }
+
+        public void UpdateSelectedItemDurability(int index)
+        {
+            hotbarSlots[index].SetDurability();
+        }
+
+        #region Callbacks
+        private IEnumerator RegisterCallbacks()
+        {
+            dynamicInventory.OnInventoryChanged += UpdateInventorySlots;
+
+            container.RegisterCallback<PointerMoveEvent>(OnPointerMove);
+            container.RegisterCallback<PointerUpEvent>(OnPointerUp);
+
+            foreach (var slot in hotbarSlots)
+            {
+                slot.OnPointerDownAction += OnSlotPressed;
+            }
+
+            yield return null;
+        }
+
+        private void UnregisterCallbacks()
+        {
+            dynamicInventory.OnInventoryChanged -= UpdateInventorySlots;
+
+            container.UnregisterCallback<PointerMoveEvent>(OnPointerMove);
+            container.UnregisterCallback<PointerUpEvent>(OnPointerUp);
+
+            foreach (var slot in dynamicInventory.GetAllSlots())
+            {
+                slot.OnPointerDownAction -= OnSlotPressed;
+            }
+
+            foreach (var slot in hotbarSlots)
+            {
+                slot.OnPointerDownAction -= OnSlotPressed;
+            }
+        }
+        #endregion
+
+        private void OnDestroy()
+        {
+            UnregisterCallbacks();
+        }
+    }
+
+    public partial class InventoryView : MonoBehaviour
+    {
+        #region Drag and Drop
+        private void HandleInventoryDrop()
+        {
+            if (draggedSlot is HotbarSlot)
+            {
+                AddItemToInventoryFromHotbar();
+            }
+        }
+
+        private void AddItemToInventoryFromHotbar()
+        {
+            var ItemWrapper = draggedSlot.ItemWrapper;
+            var Amount = draggedSlot.Amount;
+            StartCoroutine(AddItemToInventory(ItemWrapper, Amount));
+            draggedSlot.Set(null);
+            OnHotbarSlotChanged?.Invoke(draggedSlot.Index);
+        }
+
+        private void HandleHotbarDrop()
+        {
+            var closestSlot = hotbarSlots
+                .Where(s => s.worldBound.Overlaps(ghostIcon.worldBound))
+                .OrderBy(s => Vector2.Distance(s.worldBound.center, ghostIcon.worldBound.center))
+                .FirstOrDefault();
+
+            if (closestSlot == null) return;
+
+            if (draggedSlot is InventorySlot)
+            {
+                SwapInventoryWithHotbar(closestSlot);
+            }
+            else
+            {
+                if (draggedSlot == closestSlot)
+                    return;
+
+                SwapHotbarSlots(closestSlot);
+            }
+
+            OnHotbarSlotChanged?.Invoke(closestSlot.Index);
+        }
+
+        private void SwapInventoryWithHotbar(HotbarSlot closestSlot)
+        {
+            var tempItem = closestSlot.ItemWrapper;
+            var tempAmount = closestSlot.Amount;
+
+            closestSlot.Set(draggedSlot.ItemWrapper, draggedSlot.Amount);
+
+            StartCoroutine(AddItemToInventory(tempItem, tempAmount));
+            RemoveSlotFromInventory(draggedSlot);
+        }
+
+        private void SwapHotbarSlots(HotbarSlot closestSlot)
+        {
+            var tempItem = closestSlot.ItemWrapper;
+            var tempAmount = closestSlot.Amount;
+
+            closestSlot.Set(draggedSlot.ItemWrapper, draggedSlot.Amount);
+            draggedSlot.Set(tempItem, tempAmount);
+
+            OnHotbarSlotChanged?.Invoke(draggedSlot.Index);
+        }
+
+        private void ResetDraggingState()
+        {
+            ghostIcon.style.visibility = Visibility.Hidden;
+            isDragging = false;
+            draggedSlot = null;
+        }
+
+        private void DropDraggedItem()
+        {
+            OnItemDropped?.Invoke(draggedSlot.ItemWrapper, draggedSlot.Amount);
+
+            if (draggedSlot is InventorySlot)
+            {
+                RemoveSlotFromInventory(draggedSlot);
+            }
+            else
+            {
+                draggedSlot.Set(null);
+                OnHotbarSlotChanged?.Invoke(draggedSlot.Index);
+            }
+        }
+        #endregion
     }
 }

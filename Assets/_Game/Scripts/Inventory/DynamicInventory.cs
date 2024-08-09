@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Game.Items.Data;
+using Game.Items.Wrappers;
 using Game.UI.Inventory;
 using Utilities.DataStructures;
 
@@ -10,23 +11,29 @@ namespace Game.InventorySystem
     public class DynamicInventory : SortedMultiDictionary<ItemData, Slot>
     {
         public event Action OnInventoryChanged;
+     
+        public DynamicInventory(IComparer<ItemData> comparer) : base(comparer) { }
 
-        public void AddSlot(Slot slot)
+        public Slot AddItem(ItemWrapper item)
         {
             // find a slot that already contains the item and not full
-            IEnumerable<Slot> slots = GetValues(slot.ItemWrapper.ItemData);
+            IEnumerable<Slot> slots = GetValues(item.ItemData);
             var existingSlot = slots
                 .Where(s => s.Amount < s.ItemWrapper.ItemData.MaxStack)
                 .FirstOrDefault();
 
             if (existingSlot != null)
             {
-                existingSlot.Amount++;
-                return;
+                existingSlot.SetAmount(existingSlot.Amount + 1);
+                return null;
             }
 
-            Add(slot.ItemWrapper.ItemData, slot);
+            Slot slot = new InventorySlot();
+            slot.Set(item, 1);
+            Add(item.ItemData, slot);
             OnInventoryChanged?.Invoke();
+
+            return slot;
         }
 
         public void RemoveSlot(Slot slot)
