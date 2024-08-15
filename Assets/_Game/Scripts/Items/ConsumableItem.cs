@@ -14,6 +14,7 @@ namespace Game.Items
         public override void Use()
         {
             Debug.Log($"{ConsumableData.Name} Consumed");
+            AudioManager.Instance.PlaySFXClip(ConsumableData.UseSound, Camera.main.transform);
             Wrapper.Destroy();
         }
     }

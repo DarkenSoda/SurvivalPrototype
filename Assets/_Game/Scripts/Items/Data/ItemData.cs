@@ -15,6 +15,12 @@ namespace Game.Items.Data
         [field: SerializeField] public int MaxStack { get; private set; }
         [field: SerializeField] public ItemType ItemType { get; private set; }
 
+        [field: Header("Animations")]
+        [field: SerializeField] public RuntimeAnimatorController AnimatorController { get; private set; }
+
+        [field: Header("Sounds")]
+        [field: SerializeField] public AudioClip UseSound { get; private set; }
+
         [field: Header("Prefabs")]
         [field: SerializeField] public GameObject HeldPrefab { get; private set; }
         [field: SerializeField, DisableAlchemyEditor] public DroppedItemData DroppedItemData { get; private set; }

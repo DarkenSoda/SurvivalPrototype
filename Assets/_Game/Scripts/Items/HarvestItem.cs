@@ -20,19 +20,19 @@ namespace Game.Items
         {
             Ray ray = new Ray(Camera.main.transform.position, Camera.main.transform.forward);
 
-            if (!Physics.Raycast(ray, out RaycastHit hit, HarvestData.Range))
+            // Harvesting Failed
+            if (!Physics.Raycast(ray, out RaycastHit hit, HarvestData.Range) ||
+                !hit.collider.TryGetComponent(out IHarvestable harvestable) ||
+                harvestable.Type != HarvestData.HarvestableType)
+            {
                 return;
-
-            if (!hit.collider.TryGetComponent(out IHarvestable harvestable))
-                return;
-
-            if (harvestable.Type != HarvestData.HarvestableType)
-                return;
+            }
 
             hit.transform.DOShakePosition(0.1f, .1f, 100);
             harvestable.Harvest(HarvestData.Damage);
-
             DurableWrapper.DecreaseDurability(HarvestData.DurabilityDecreaseRate);
+
+            AudioManager.Instance.PlaySFXClip(HarvestData.UseSound, hit.transform);
         }
     }
 }

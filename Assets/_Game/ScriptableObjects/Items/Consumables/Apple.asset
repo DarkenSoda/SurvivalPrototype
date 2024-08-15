@@ -18,6 +18,10 @@ MonoBehaviour:
     type: 3}
   <MaxStack>k__BackingField: 6
   <ItemType>k__BackingField: 2
+  <AnimatorController>k__BackingField: {fileID: 9100000, guid: 06b55f7b9c77906438c33c2cdd79a62e,
+    type: 2}
+  <UseSound>k__BackingField: {fileID: 8300000, guid: a800129d12901a0448387bb00a073a64,
+    type: 3}
   <HeldPrefab>k__BackingField: {fileID: 7899196362255097851, guid: ac675dc34f822c04f8f02e0696d56823,
     type: 3}
   <DroppedItemData>k__BackingField:

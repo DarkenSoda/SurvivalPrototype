@@ -11,6 +11,8 @@ namespace Game.Items
     {
         [SerializeField] private GameObject model;
         [SerializeField] private float interactionDelay = 1f;
+        [SerializeField] private AudioClip[] pickUpSounds;
+
         private Rigidbody rb;
         public ItemWrapper ItemWrapper { get; private set; }
 
@@ -62,6 +64,7 @@ namespace Game.Items
 
             if (other.CompareTag("Player"))
             {
+                AudioManager.Instance.PlayRandomSFXClipRandomPitch(pickUpSounds, transform);
                 other.GetComponent<Inventory>().PickUpItem(ItemWrapper);
                 Destroy(gameObject);
             }

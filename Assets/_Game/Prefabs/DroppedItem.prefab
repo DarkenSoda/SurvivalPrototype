@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3625341830669122981}
   - component: {fileID: 8623927839431581002}
   - component: {fileID: 6989968623221754493}
-  - component: {fileID: 9165545912149545550}
   - component: {fileID: 3879678402632450081}
   m_Layer: 0
   m_Name: Sphere
@@ -86,18 +85,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &9165545912149545550
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2126151366379250694}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 743323f20ff3a2c40a81102698833658, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &3879678402632450081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,6 +109,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7117714568374005846}
   - component: {fileID: 1963437075151324004}
+  - component: {fileID: 2308159736751863847}
   m_Layer: 0
   m_Name: Model
   m_TagString: Untagged
@@ -196,6 +184,18 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &2308159736751863847
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2352518972233815415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 743323f20ff3a2c40a81102698833658, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6653294905956189895
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,6 +245,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   model: {fileID: 2352518972233815415}
   interactionDelay: 0.5
+  pickUpSounds:
+  - {fileID: 8300000, guid: 3338cd007e9fef74890e49198d209bc9, type: 3}
+  - {fileID: 8300000, guid: ca8986aa26829104faa673ddd1b3f6cc, type: 3}
+  - {fileID: 8300000, guid: ff27cad8901fa7841b65a4701c9ba73e, type: 3}
 --- !u!135 &7233238101415483517
 SphereCollider:
   m_ObjectHideFlags: 0

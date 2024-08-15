@@ -18,6 +18,10 @@ MonoBehaviour:
     type: 3}
   <MaxStack>k__BackingField: 1
   <ItemType>k__BackingField: 1
+  <AnimatorController>k__BackingField: {fileID: 9100000, guid: dc7e3b3069f5792449ad466ecc29ab9c,
+    type: 2}
+  <UseSound>k__BackingField: {fileID: 8300000, guid: 48bbb1dd262432243a37442654ae37b6,
+    type: 3}
   <HeldPrefab>k__BackingField: {fileID: 3188313086354724392, guid: 05f975b5a4efbcb41aa041952acb1d0c,
     type: 3}
   <DroppedItemData>k__BackingField:
@@ -29,5 +33,5 @@ MonoBehaviour:
   <Damage>k__BackingField: 1
   <Range>k__BackingField: 1.5
   <MaxDurability>k__BackingField: 100
-  <DurabilityDecreaseRate>k__BackingField: 20
+  <DurabilityDecreaseRate>k__BackingField: 10
   <HarvestableType>k__BackingField: 1

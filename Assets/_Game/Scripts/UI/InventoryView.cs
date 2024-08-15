@@ -28,6 +28,7 @@ namespace Game.UI.Inventory
         private VisualElement container;
         private VisualElement inventory;
         private VisualElement hotbar;
+        private VisualElement hotbarOverlay;
         // private VisualElement inventorySlotContainer;
         // private ListView inventorySlotContainer;
         private ScrollView inventorySlotContainer;
@@ -81,6 +82,9 @@ namespace Game.UI.Inventory
             hotbar = container.CreateChild("hotbar");
 
             var hotbarSlotContainer = hotbar.CreateChild("hotbarSlotContainer");
+            hotbarOverlay = hotbar.CreateChild("hotbarOverlay");
+            hotbarOverlay.pickingMode = PickingMode.Ignore; // Allows events to pass through
+
             for (int i = 0; i < hotbarSlotCount; i++)
             {
                 var slot = hotbarSlotContainer.CreateChild<HotbarSlot>("hotbarSlot");
@@ -127,6 +131,7 @@ namespace Game.UI.Inventory
         public void ToggleInventory()
         {
             inventory.style.visibility = inventory.style.visibility == Visibility.Visible ? Visibility.Hidden : Visibility.Visible;
+            hotbarOverlay.style.visibility = inventory.style.visibility;
         }
         #endregion
 

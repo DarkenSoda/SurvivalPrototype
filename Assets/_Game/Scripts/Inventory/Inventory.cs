@@ -7,6 +7,7 @@ using Alchemy.Serialization;
 using Game.UI.Inventory;
 using Game.Items.Wrappers;
 using Game.Player;
+using UnityEngine.Events;
 
 namespace Game.InventorySystem
 {
@@ -23,6 +24,8 @@ namespace Game.InventorySystem
 
         private Transform cameraTransform;
         private PlayerItemManager playerItemManager;
+
+        public UnityEvent<bool> OnInventoryToggled;
 
         private void Awake()
         {
@@ -82,12 +85,16 @@ namespace Game.InventorySystem
             {
                 Cursor.lockState = CursorLockMode.None;
                 Cursor.visible = true;
+                // playerItemManager.enabled = false;
             }
             else
             {
                 Cursor.lockState = CursorLockMode.Locked;
                 Cursor.visible = false;
+                // playerItemManager.enabled = true;
             }
+
+            OnInventoryToggled?.Invoke(!IsInventoryVisible);
         }
 
         public void PickUpItem(ItemWrapper itemWrapper)

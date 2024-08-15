@@ -57,6 +57,7 @@ namespace Game.Player
             Instantiate(itemWrapper.ItemData.HeldPrefab, itemHolder);
             RegisterCallbacks();
 
+            armAnimator.runtimeAnimatorController = itemWrapper.ItemData.AnimatorController;
             arm.gameObject.SetActive(true);
         }
 
